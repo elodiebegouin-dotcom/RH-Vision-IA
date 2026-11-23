@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Tri CV – CHIFFON</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23b5553a%22/%3E%3Ctext x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 fill=%22white%22%3E✂%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="entete">
+    <div class="marque">
+      <span class="logo" aria-hidden="true">✂</span>
+      <div>
+        <h1>Tri CV <span>CHIFFON</span></h1>
+        <p>Aide à la présélection, adaptée aux besoins RH de l'entreprise</p>
+      </div>
+    </div>
+    <p class="confidentialite" role="note">
+      🔒 Tout est traité dans votre navigateur : <strong>aucun CV n'est envoyé sur Internet</strong>.
+      L'outil classe et explique, <strong>c'est le recruteur qui décide</strong>.
+    </p>
+  </header>
+
+  <nav class="onglets" aria-label="Étapes">
+    <button class="actif" data-cible="p-grille"><b>1</b> Poste &amp; grille</button>
+    <button data-cible="p-cv"><b>2</b> Candidatures <span class="compte" id="nbCV">0</span></button>
+    <button data-cible="p-classement"><b>3</b> Classement</button>
+    <button data-cible="p-registre"><b>4</b> Vivier &amp; conservation</button>
+    <button data-cible="p-methode">Méthode</button>
+  </nav>
+
+  <main>
+    <!-- 1. POSTE & GRILLE -->
+    <section class="panneau" id="p-grille">
+      <div class="barre">
+        <label class="grand">Poste à pourvoir
+          <select id="selPoste"></select>
+        </label>
+        <div class="boutons">
+          <button id="btnNouveauPoste">+ Nouveau poste</button>
+          <button id="btnDupliquer">Dupliquer</button>
+          <button id="btnSupprPoste" class="secondaire">Supprimer</button>
+        </div>
+      </div>
+
+      <div class="carte">
+        <div class="champs">
+          <label>Intitulé du poste <input id="gPoste"></label>
+          <label class="large">Besoin de l'entreprise (contexte) <input id="gContexte"></label>
+          <label>Expérience minimale souhaitée (ans) <input id="gMinExp" type="number" min="0" class="num"></label>
+          <label>Poids de l'expérience <input id="gPoidsExp" type="number" min="0" class="num"></label>
+        </div>
+      </div>
+
+      <div class="carte">
+        <h2>Critères de la grille</h2>
+        <p class="aide">Chaque critère est noté de 0 à 100 % selon le nombre de mots-clés distincts trouvés (2 = 100 %).
+          Les mots-clés peuvent être des racines (« digitali » trouve « digitalisation »). Accents et majuscules ignorés.</p>
+        <div class="defile">
+          <table id="tCriteres" class="edit">
+            <thead><tr><th>Critère</th><th>Poids</th><th>Mots-clés (séparés par des virgules)</th><th>Indispensable</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="pied"><button id="btnAjoutCritere">+ Ajouter un critère</button><small id="sommePoids"></small></div>
+      </div>
+
+      <div class="carte">
+        <h2>Points d'attention</h2>
+        <p class="aide">Expressions qui déclenchent un point à vérifier en entretien (jamais une élimination automatique).
+          Séparez les variantes par « | ».</p>
+        <div class="defile">
+          <table id="tSignaux" class="edit">
+            <thead><tr><th>Expressions recherchées</th><th>Message affiché</th><th></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="pied"><button id="btnAjoutSignal">+ Ajouter un point d'attention</button></div>
+      </div>
+
+      <div class="barre fin">
+        <button id="btnExportGrilles" class="secondaire">Exporter les grilles (JSON)</button>
+        <label class="bouton secondaire">Importer des grilles<input type="file" id="fImportGrilles" accept=".json" hidden></label>
+        <button id="btnReinit" class="secondaire">Revenir aux grilles CHIFFON d'origine</button>
+      </div>
+    </section>
+
+    <!-- 2. CANDIDATURES -->
+    <section class="panneau" id="p-cv" hidden>
+      <div class="deux">
+        <div class="carte">
+          <h2>Importer des CV</h2>
+          <label id="zoneDepot" class="depot" tabindex="0">
+            <input type="file" id="fCV" accept=".pdf,.docx,.txt" multiple hidden>
+            <strong>Glissez vos CV ici</strong><span>ou cliquez pour choisir des fichiers PDF, Word (.docx) ou texte</span>
+          </label>
+          <p class="aide">Les PDF scannés (images) ne sont pas lisibles : demandez une version texte ou collez le contenu ci-contre.</p>
+          <div class="boutons">
+            <button id="btnDemo">Charger les 15 candidatures de l'Annexe 2</button>
+          </div>
+        </div>
+        <div class="carte">
+          <h2>Coller un CV</h2>
+          <label>Nom ou référence <input id="collerNom" placeholder="ex. Candidature LinkedIn 12"></label>
+          <label>Texte du CV <textarea id="collerTexte" rows="7"></textarea></label>
+          <button id="btnColler">Ajouter</button>
+        </div>
+      </div>
+      <div class="carte">
+        <div class="pied haut"><h2>Candidatures chargées</h2><button id="btnViderCV" class="secondaire">Tout retirer</button></div>
+        <ul id="listeCV" class="liste"></ul>
+        <p class="aide">Les CV restent dans la mémoire de cette page et disparaissent à sa fermeture.
+          Les originaux se rangent dans l'espace de stockage RH de l'entreprise (voir onglet 4).</p>
+      </div>
+    </section>
+
+    <!-- 3. CLASSEMENT -->
+    <section class="panneau" id="p-classement" hidden>
+      <div class="barre">
+        <div>
+          <h2 class="sans-marge">Classement pour : <span id="posteCourant"></span></h2>
+          <p class="aide sans-marge" id="contexteCourant"></p>
+        </div>
+        <div class="boutons">
+          <button id="btnExportClassement" class="secondaire">Exporter le classement (CSV)</button>
+          <button id="btnVersRegistre">Reporter les décisions dans le registre</button>
+        </div>
+      </div>
+      <p class="aide">Cliquez sur une ligne pour voir le détail, les questions d'entretien et saisir votre décision.
+        Pour changer de poste, retournez à l'onglet 1 : le classement se recalcule.</p>
+      <div class="carte flush defile">
+        <table id="tClassement" class="donnees">
+          <thead><tr><th>Rang</th><th>Candidature</th><th>Score</th><th>Adéquation</th><th>Points d'attention</th><th>Décision</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. VIVIER & CONSERVATION -->
+    <section class="panneau" id="p-registre" hidden>
+      <div class="kpis">
+        <div><b id="kActifs">0</b><span>CV actifs dans le vivier</span></div>
+        <div class="orange"><b id="kBientot">0</b><span>expirent sous 30 jours : relancer</span></div>
+        <div class="rouge"><b id="kExpires">0</b><span>à supprimer maintenant</span></div>
+        <div><b id="kJournal">0</b><span>suppressions cette session</span></div>
+      </div>
+      <div class="carte">
+        <h2>Registre du vivier</h2>
+        <p class="aide">Le registre est un fichier CSV rangé avec les CV dans l'espace de stockage RH (SharePoint, Drive…).
+          Chaque mois : importez-le, supprimez les CV signalés, puis réexportez-le. Règle : <strong>dernier contact + 365 jours</strong>
+          pour les candidats qui ont donné leur accord.</p>
+        <div class="boutons">
+          <label class="bouton">Importer le registre (CSV)<input type="file" id="fRegistre" accept=".csv" hidden></label>
+          <button id="btnExportRegistre" class="secondaire">Exporter le registre à jour</button>
+          <button id="btnExportJournal" class="secondaire">Exporter le journal de purge</button>
+        </div>
+      </div>
+      <div class="carte flush defile">
+        <table id="tRegistre" class="donnees">
+          <thead><tr><th>Référence / CV</th><th>Poste</th><th>Décision</th><th>Accord</th><th>Dernier contact</th><th>Expiration</th><th>Statut</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MÉTHODE -->
+    <section class="panneau texte-long" id="p-methode" hidden>
+      <div class="carte">
+        <h2>Comment le score est calculé</h2>
+        <ol>
+          <li>Le texte du CV est lu dans le navigateur, puis les données à risque de discrimination sont <strong>masquées avant la notation</strong> :
+            années (qui trahissent l'âge), dates, âge, situation familiale, nationalité, civilité, coordonnées, adresse.</li>
+          <li>Chaque critère de la grille reçoit 0 %, 50 % ou 100 % selon le nombre de mots-clés distincts trouvés (0, 1, 2 ou plus).</li>
+          <li>L'expérience déclarée (« 8 ans d'expérience », « 18 mois ») est comparée au minimum souhaité.</li>
+          <li>Le score final est la moyenne pondérée des critères, ramenée sur 100.</li>
+          <li>Un critère « indispensable » absent place le CV en fin de liste avec un signal rouge, mais <strong>ne l'élimine jamais</strong> :
+            le recruteur relit et décide.</li>
+        </ol>
+        <h2>Limites à connaître</h2>
+        <ul>
+          <li>L'outil repère des mots, il ne comprend pas le sens : un CV mal rédigé peut être sous-noté, un CV « rempli de mots-clés » sur-noté.
+            Lisez toujours les CV du milieu de classement.</li>
+          <li>Les grilles reflètent les besoins identifiés dans l'Annexe 1 : relisez-les avec les managers avant chaque recrutement.</li>
+          <li>Un poids élevé sur l'expérience peut écarter indirectement les profils jeunes : gardez un minimum raisonnable.</li>
+        </ul>
+        <h2>Cadre légal (RGPD)</h2>
+        <ul>
+          <li>Pas de décision fondée exclusivement sur un traitement automatisé : l'outil classe, la personne décide (art. 22 RGPD).</li>
+          <li>Le candidat est informé, dès le dépôt de sa candidature, qu'un outil d'aide au tri est utilisé et que son CV sera conservé 1 an avec son accord.</li>
+          <li>Toute demande d'accès ou de suppression reçoit une réponse, même si la suppression automatique est prévue plus tard.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/pdf.min.js"></script>
+  <script src="vendor/mammoth.browser.min.js"></script>
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
